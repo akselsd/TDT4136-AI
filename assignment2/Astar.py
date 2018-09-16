@@ -6,6 +6,7 @@ def update_existing_node(new_parent, new_path, existing_node):
 	if existing_node.g > new_path + existing_node.cost:
 		existing_node.g = new_path + existing_node.cost
 		existing_node.parent = new_parent
+		# Update child nodes aswell
 		for kid in existing_node.kids:
 			update_existing_node(existing_node, existing_node.g, kid)
 
@@ -24,6 +25,7 @@ def extract_min(nodes):
 # Backtrack from the goal node, add each node to the path list
 def build_path(node):
 	path = []
+	# Start node got no parent
 	while(node.parent.parent != None):
 		node = node.parent
 		path.append((node.x, node.y))
@@ -58,25 +60,28 @@ def a_star(board):
 			if node in closed:
 				continue
 
+			# Set heuristic function
+			node.h = board.get_distance_to_goal(node)
+
 			# If it is already found, check if this is a better path
 			if node in open_nodes:
-				update_existing_node(current, current.g, open_nodes[open_nodes.index(node)])
+				update_existing_node(current, current.g, node)
 				continue
 
 			# Add new node to open set
 			node.g = node.cost + current.g
-			node.h = board.get_distance_to_goal(node)
 			open_nodes.append(node)
-
+			
+	# No path found ¯\_(ツ)_/¯
 	return None
 
 def main():
 	txtfiles = [
-#		"board-1-0.txt",
-#		"boards/board-1-1.txt",
-#		"boards/board-1-2.txt",
+		"board-1-0.txt",
+		"boards/board-1-1.txt",
+		"boards/board-1-2.txt",
 		"boards/board-1-3.txt",
-#		"boards/board-1-4.txt",
+		"boards/board-1-4.txt",
 		"boards/board-2-1.txt",
 		"boards/board-2-2.txt",
 		"boards/board-2-3.txt",
@@ -91,8 +96,5 @@ def main():
 		print()
 
 if __name__ == "__main__":
-	for i in range(100):
-		print(
-			"\033[" + str(i) + "m " + str(i) + " \033[0m")
 	main()
 	

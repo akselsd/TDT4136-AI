@@ -16,15 +16,15 @@ CHAR_TO_COST = {
 }
 
 CHAR_TO_COLOR = {
-	".": "35",
-	"r": "35",
+	".": "30",
+	"r": "30",
 	"w": "34",
 	"m": "92",
 	"f": "32",
 	"g": "33",
-	"o": "30",
+	"o": "35",
 	"A": "31",
-	"B": "47",
+	"B": "36",
 	"#": "37"
 }
 print_colors = True
@@ -61,7 +61,7 @@ class Node:
 
 class Board:
 
-	# Load the into an array of strings
+	# Load the board into an array of strings
 	def _load_board_from_file(self, txtfile):
 		with open(txtfile) as f:
 			for line in f.readlines():
@@ -69,12 +69,15 @@ class Board:
 
 		self._size_y = len(self._board)
 		self._size_x = len(self._board[0])
+
+		# Assert that the board is rectangular (debugging)
 		for row in self._board:
 			if len(row) != self._size_x:
 				print("Error loading board, board size not rectangular")
 				print("Expected", self._size_x, "got", len(row),". Row: ", row)
 				exit()
 
+		# Find start and goal square
 		for y in range(self._size_y):
 			for x in range(self._size_x):
 				if self._board[y][x] == START:
@@ -82,7 +85,7 @@ class Board:
 				if self._board[y][x] == GOAL:
 					self._goal = (x, y)
 
-	# Decide if a node is a wall
+	# Decide if a square is a wall
 	# Edges is treated as walls
 	def _is_wall(self, x, y):
 		if x < 0 or x >= self._size_x:
@@ -110,12 +113,15 @@ class Board:
 		for d in dirs:
 			x = node.x + d[0]
 			y = node.y + d[1]
+
+			# Make new node
 			neighbours.append(Node(
 				x,
 				y,
 				CHAR_TO_COST[self._board[y][x]],
 				node))
 
+		# Add the newly created nodes as kids
 		node.kids.extend(neighbours)
 		return neighbours
 
@@ -138,8 +144,9 @@ class Board:
 	def is_goal_node(self, node):
 		return (node.x, node.y) == self._goal
 
-	#Prints the board
-	# @param solution is an array of nodes that makes up the solution path
+	# Prints the board
+	# @param solution is an array of (x, y) tuples 
+	# that makes up the solution path
 	def print_board(self, solution):
 		for y in range(self._size_y):
 			for x in range(self._size_x):
@@ -152,6 +159,7 @@ class Board:
 				print(char, end ="")
 			print()
 
+	# Make new board
 	def __init__(self, txtfile):
 		self._board = []
 		self._size_x = 0
@@ -160,6 +168,7 @@ class Board:
 		self._start = None
 		self._load_board_from_file(txtfile)
 
+# Map each board char to a ANSI-color. (For printing the board)
 def char_to_color(char):
 	fg = CHAR_TO_COLOR[char]
 	bg = str(int(CHAR_TO_COLOR[char]) + 10)
