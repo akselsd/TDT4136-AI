@@ -15,6 +15,19 @@ CHAR_TO_COST = {
 	"B": 0
 }
 
+CHAR_TO_STRING = {
+	"w": "Water",
+	"m": "Mountain",
+	"f": "Forest",
+	"g": "Grassland",
+	"r": "Road",
+	"A": "Start",
+	"B": "End",
+	"o": "Optimal path",
+	"#": "Wall"
+
+}
+
 CHAR_TO_COLOR = {
 	".": "30",
 	"r": "30",
@@ -173,3 +186,9 @@ def char_to_color(char):
 	fg = CHAR_TO_COLOR[char]
 	bg = str(int(CHAR_TO_COLOR[char]) + 10)
 	return "\033[" + fg + ";" + bg + "m" + char + "\033[0m"
+
+def print_color_legend():
+	print("-- Color Legend --")
+	for char, string in CHAR_TO_STRING.items():
+		print(char_to_color(char) + " - " + string)
+
